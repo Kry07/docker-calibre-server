@@ -4,8 +4,8 @@ A Docker-file to create a calibre server with automatic books import
 
 ## Build the image 
 
-`sudo docker build -t ekito/calibre-server`
+`sudo docker build -t kry07/calibre-server`
 
 ## Run the container
 
-`sudo docker run -d --restart=always -t -i -p 80:8080 -v ~/ebooks:/opt/calibre/import ekito/calibre-server`
+`sudo docker run -d -t -i -p 8080:8080 -v ~/ebooks:/opt/calibre/import kry07/calibre-server`
