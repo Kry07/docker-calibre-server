@@ -1,1 +1,0 @@
-*/1 * * * * user /usr/bin/calibredb add $IMPORT --library-path $LIBRARY >> /var/log/cron.log 2>&1
