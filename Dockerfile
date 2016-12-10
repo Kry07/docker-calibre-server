@@ -9,21 +9,21 @@ RUN apt-get clean \
 	&& rm -rf /var/cache/apt/* \
 	&& rm -rf /var/lib/apt/lists/*
 
-EXPOSE 8080
+ENV LIBRARY /home/user/library
+ENV IMPORT /home/user/import
 
-ENV LIBRARY /opt/calibre/library
-ENV IMPORT /opt/calibre/import
+USER user
 
 # Create directory for library and directory to import files
 RUN mkdir -p $LIBRARY $IMPORT
-RUN chown user:user -R $LIBRARY $IMPORT
-VOLUME $IMPORT
+VOLUME $LIBRARY $IMPORT
 
-# Add crontab job to import books in the library
-RUN echo "*/1 * * * * user /usr/bin/calibredb add $IMPORT --library-path $LIBRARY >> /var/log/cron.log 2>&1" > /etc/cron.d/calibre-update \
-	&& chmod 0644 /etc/cron.d/calibre-update
-RUN touch /var/log/cron.log \
-	&& chown user:user /var/log/cron.log
+# Add import.sh to import books in the library
+RUN echo "/usr/bin/calibredb add \$IMPORT --library-path \$LIBRARY >> /home/user/import.log 2>&1" > /home/user/import.sh \
+	&& chmod +x /home/user/import.sh \
+	&& touch /home/user/import.log
 
-# Run cron job and start calibre server as user
-CMD cron && su user -c '/usr/bin/calibre-server --with-library=$LIBRARY'
+EXPOSE 8080
+
+# Run import.sh and start calibre server as user
+CMD /home/user/import.sh && /usr/bin/calibre-server --with-library=$LIBRARY
